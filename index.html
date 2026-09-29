@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LinkedIn Audit Scorecard</title>
+<meta name="description" content="Paste your LinkedIn headline and About section. Get a scored audit in seconds.">
+<style>
+:root{--blue:#0A66C2;--blue-d:#004182;--red:#D11124;--ink:#1D2226;--mute:#56687A;--line:#D5DEE7;--bg:#EEF3F8;--white:#fff;--ok:#1B7F4B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+header{background:var(--blue);color:#fff;padding:48px 0 64px}
+header h1{font-size:clamp(28px,6vw,42px);line-height:1.15;margin:0 0 12px;font-weight:700;letter-spacing:-.01em}
+header p{margin:0;font-size:18px;max-width:34em;opacity:.95}
+.tag{display:inline-block;background:var(--red);color:#fff;font-weight:600;font-size:14px;padding:4px 12px;border-radius:99px;margin-bottom:16px}
+main{margin-top:-36px;padding-bottom:64px}
+.card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:28px;margin-bottom:20px}
+label{display:block;font-weight:600;margin:0 0 6px}
+.hint{color:var(--mute);font-size:14px;font-weight:400}
+input,textarea{width:100%;font:inherit;padding:12px;border:1px solid #8FA3B8;border-radius:8px;margin-bottom:18px;background:#fff;color:var(--ink)}
+textarea{min-height:170px;resize:vertical}
+input:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:560px){.row{grid-template-columns:1fr}.card{padding:20px}}
+.btn{display:inline-block;border:0;border-radius:99px;padding:14px 26px;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;text-align:center}
+.btn-p{background:var(--blue);color:#fff}.btn-p:hover{background:var(--blue-d)}
+.btn-r{background:var(--red);color:#fff}.btn-r:hover{background:#A80D1C}
+.btn-o{background:#fff;color:var(--blue);box-shadow:inset 0 0 0 2px var(--blue)}
+.btn[disabled]{opacity:.6;cursor:wait}
+.err{color:var(--red);font-weight:600;margin:0 0 14px}
+.hidden{display:none}
+.score{display:flex;gap:28px;align-items:center;flex-wrap:wrap}
+.ring{--p:0;width:150px;height:150px;border-radius:50%;background:conic-gradient(var(--c,var(--red)) calc(var(--p)*1%),var(--line) 0);display:grid;place-items:center;flex:none}
+.ring div{width:118px;height:118px;border-radius:50%;background:#fff;display:grid;place-items:center;text-align:center;line-height:1}
+.ring b{font-size:44px}.ring span{font-size:13px;color:var(--mute)}
+.bars{flex:1;min-width:220px}
+.bar{margin-bottom:14px}.bar p{display:flex;justify-content:space-between;margin:0 0 4px;font-weight:600;font-size:15px}
+.track{height:10px;background:var(--line);border-radius:6px;overflow:hidden}.fill{height:100%;background:var(--blue);border-radius:6px}
+.verdict{font-size:18px;font-weight:600;margin:24px 0 8px}
+.leak{border-left:4px solid var(--red);padding:4px 0 4px 14px;margin:0 0 24px}
+.lock{border:2px solid var(--blue);background:#F5F9FD}
+.lock h2,.card h2{margin:0 0 8px;font-size:22px}
+.lock ul{margin:12px 0 20px;padding-left:20px}
+.acts{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+.item{border-top:1px solid var(--line);padding:14px 0}.item:first-child{border-top:0}
+.item h3{margin:0 0 4px;font-size:16px}.item small{color:var(--mute)}
+.copy{white-space:pre-wrap;background:#F5F9FD;border:1px solid var(--line);border-radius:8px;padding:14px;margin:8px 0}
+.mini{background:none;border:0;color:var(--blue);font:inherit;font-weight:600;cursor:pointer;padding:0}
+footer{text-align:center;color:var(--mute);font-size:14px;padding-bottom:40px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <span class="tag">Free · 60 seconds</span>
+  <h1>Does your LinkedIn profile convert, or just exist?</h1>
+  <p>Paste your headline and About section. Get a score built on 500+ real profile reviews.</p>
+</div></header>
+
+<main class="wrap">
+  <section class="card" id="formCard">
+    <form id="f" novalidate>
+      <div class="row">
+        <div><label for="name">Your name</label><input id="name" autocomplete="name" required></div>
+        <div><label for="wa">WhatsApp number</label><input id="wa" type="tel" autocomplete="tel" placeholder="+234…" required></div>
+      </div>
+      <label for="hl">Your LinkedIn headline</label>
+      <input id="hl" maxlength="400" required>
+      <label for="ab">Your About section <span class="hint">(paste all of it)</span></label>
+      <textarea id="ab" maxlength="5000" required></textarea>
+      <p class="err hidden" id="err" role="alert"></p>
+      <button class="btn btn-p" id="go" type="submit">Score my profile</button>
+    </form>
+  </section>
+
+  <section id="result" class="hidden"></section>
+  <section id="paid" class="hidden"></section>
+</main>
+<footer>Optimal Edge Business Concepts</footer>
+
+<form name="lead" data-netlify="true" hidden>
+  <input name="name"><input name="whatsapp"><input name="score"><input name="headline">
+</form>
+
+<script>
+const PAY = "https://paystack.shop/pay/qhbpoadq2p";
+const WA = "https://wa.me/2348139780144";
+const $ = id => document.getElementById(id);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+const store = { get: () => { try { return JSON.parse(localStorage.getItem("audit") || "null"); } catch { return null; } }, set: v => { try { localStorage.setItem("audit", JSON.stringify(v)); } catch {} } };
+
+async function api(body) {
+  const r = await fetch("/api/audit", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error || "Something went wrong.");
+  return d;
+}
+const wa = msg => WA + "?text=" + encodeURIComponent(msg);
+const showErr = m => { $("err").textContent = m; $("err").classList.toggle("hidden", !m); };
+
+$("f").addEventListener("submit", async e => {
+  e.preventDefault(); showErr("");
+  const v = { name: $("name").value.trim(), wa: $("wa").value.trim(), headline: $("hl").value.trim(), about: $("ab").value.trim() };
+  if (!v.name || v.wa.replace(/\D/g, "").length < 7) return showErr("Enter your name and a valid WhatsApp number.");
+  if (v.headline.length < 5 || v.about.length < 30) return showErr("Paste your full headline and About section.");
+  const b = $("go"); b.disabled = true; b.textContent = "Scoring your profile…";
+  try {
+    const s = await api({ mode: "score", headline: v.headline, about: v.about });
+    store.set(v);
+    fetch("/", { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ "form-name": "lead", name: v.name, whatsapp: v.wa, score: s.total, headline: v.headline }).toString() }).catch(() => {});
+    renderScore(s, v);
+  } catch (x) { showErr(x.message); }
+  b.disabled = false; b.textContent = "Score my profile";
+});
+
+function renderScore(s, v) {
+  $("formCard").classList.add("hidden");
+  const R = $("result"); R.replaceChildren(); R.classList.remove("hidden");
+  const c = el("div", "card"), top = el("div", "score");
+  const ring = el("div", "ring"); ring.style.setProperty("--p", s.total);
+  ring.style.setProperty("--c", s.total >= 75 ? "var(--ok)" : s.total >= 50 ? "var(--blue)" : "var(--red)");
+  const inner = el("div"); inner.append(el("b", "", s.total), el("span", "", "out of 100")); ring.append(inner);
+  const bars = el("div", "bars");
+  [["Headline", s.cats.headline], ["Attraction (hook, reader focus, skimmability, voice)", s.cats.attraction], ["Conversion (proof, story, next step)", s.cats.conversion]].forEach(([n, k]) => {
+    const b = el("div", "bar"), p = el("p"); p.append(el("span", "", n), el("span", "", k.score + "/" + k.max));
+    const t = el("div", "track"), f = el("div", "fill"); f.style.width = (k.score / k.max * 100) + "%"; t.append(f); b.append(p, t); bars.append(b);
+  });
+  top.append(ring, bars); c.append(top, el("p", "verdict", s.verdict));
+  const leak = el("p", "leak"); leak.append(el("strong", "", "Biggest leak: "), document.createTextNode(s.biggest_leak)); c.append(leak);
+  R.append(c);
+
+  const msg = `Hi, I'm ${v.name}. My LinkedIn Audit Scorecard result was ${s.total}/100. I'd like help optimising my profile.`;
+  const L = el("div", "card lock");
+  const payBtn = () => { const b = el("button", "btn btn-r", "Get my full rewrite · ₦10,000"); b.onclick = () => { store.set(v); location.href = PAY; }; return b; };
+  const waBtn = (cls, txt) => { const a = el("a", "btn " + cls, txt); a.href = wa(msg); a.target = "_blank"; a.rel = "noopener"; return a; };
+  const acts = el("div", "acts");
+  if (s.total >= 75) {
+    L.append(el("h2", "", "Your profile is strong. Now position it."), el("p", "", "You're past the basics. The gains from here come from sharper positioning and a content strategy, which is what my optimisation service handles."));
+    acts.append(waBtn("btn-r", "Talk to me on WhatsApp"), payBtn());
+  } else {
+    L.append(el("h2", "", s.total >= 50 ? "You have a base. Close the gaps." : "Your profile is losing people early."));
+    const ul = el("ul"); ["Line-by-line diagnosis on all 12 criteria", "3 rewritten headline options", "Your full About section rewritten in first person", "3 quick wins to apply today"].forEach(x => ul.append(el("li", "", x)));
+    L.append(ul); acts.append(payBtn());
+    if (s.total >= 50) acts.append(waBtn("btn-o", "Want it done for you? Chat on WhatsApp"));
+    else L.append(el("p", "hint", "Prefer someone to do it with you? Message me on WhatsApp after your rewrite."));
+  }
+  L.append(acts); R.append(L);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function copyBlock(text) {
+  const w = el("div"), p = el("div", "copy", text), b = el("button", "mini", "Copy");
+  b.onclick = () => navigator.clipboard.writeText(text).then(() => { b.textContent = "Copied"; setTimeout(() => b.textContent = "Copy", 1500); });
+  w.append(p, b); return w;
+}
+
+async function unlock(ref, v) {
+  $("formCard").classList.add("hidden");
+  const P = $("paid"); P.classList.remove("hidden"); P.replaceChildren();
+  const loading = el("div", "card"); loading.append(el("h2", "", "Payment received. Writing your rewrite…"), el("p", "hint", "This takes about 30 seconds. Don't close this page."));
+  P.append(loading);
+  try {
+    const r = await api({ mode: "rewrite", headline: v.headline, about: v.about, name: v.name, reference: ref });
+    P.replaceChildren();
+    const d = el("div", "card"); d.append(el("h2", "", "Your diagnosis"));
+    (r.diagnosis || []).forEach(x => { const i = el("div", "item"); i.append(el("h3", "", `${x.criterion} · ${x.score}`), el("p", "", x.issue), el("small", "", "Fix: " + x.fix)); d.append(i); });
+    const h = el("div", "card"); h.append(el("h2", "", "Headline options")); (r.headline_options || []).forEach(t => h.append(copyBlock(t)));
+    const a = el("div", "card"); a.append(el("h2", "", "Your rewritten About section"), copyBlock(r.about_rewrite || ""));
+    const q = el("div", "card"); q.append(el("h2", "", "Do these today")); const ul = el("ul"); (r.quick_wins || []).forEach(t => ul.append(el("li", "", t))); q.append(ul);
+    const n = el("div", "card lock"); n.append(el("h2", "", "Want me to take it from here?"), el("p", "", "I optimise the full profile and build the content system behind it."));
+    const link = el("a", "btn btn-r", "Talk to me on WhatsApp"); link.href = wa(`Hi, I'm ${v.name}. I got my LinkedIn rewrite and I'd like help with full profile optimisation.`); link.target = "_blank"; link.rel = "noopener"; n.append(link);
+    P.append(d, h, a, q, n);
+  } catch (x) {
+    P.replaceChildren(); const e = el("div", "card"); e.append(el("h2", "", "We couldn't unlock your rewrite"), el("p", "", x.message), el("p", "", "If you paid, message me on WhatsApp with your payment receipt and I'll sort it out."));
+    const l = el("a", "btn btn-p", "Message on WhatsApp"); l.href = wa(`Hi, I paid for my LinkedIn rewrite (ref: ${ref}) but couldn't unlock it.`); e.append(l); P.append(e);
+  }
+}
+
+const q = new URLSearchParams(location.search), ref = q.get("reference") || q.get("trxref"), saved = store.get();
+if (ref && saved) unlock(ref, saved);
+</script>
+</body>
+</html>
